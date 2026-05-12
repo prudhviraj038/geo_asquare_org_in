@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.aitrix.bharatsheld",
+      "sha256_cert_fingerprints": [
+      "91:42:2C:24:40:37:E1:97:EA:0B:E4:D7:61:15:FB:B7:11:BC:32:6E:F0:7E:4A:F7:3A:FB:83:02:B5:0B:71:FB
+"
+      ]
+    }
+  }
+]

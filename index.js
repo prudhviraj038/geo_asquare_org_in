@@ -1,0 +1,31 @@
+const express = require('express');
+const path = require('path');
+const sequelize = require('./database/database');
+const tagsRouter = require('./routes/tags');
+
+const app = express();
+const port = 3888;
+
+const redirectHandler = require('./redirectHandler');
+
+
+// ✅ Use absolute path for uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/tags', tagsRouter);
+
+app.get('/', (req, res) => {
+  res.send('Geo Tag Server is running!');
+});
+
+app.get('/test', (req, res) => {
+  res.send('Geo Tag Server is testing!');
+});
+
+app.use('/redirect', redirectHandler);
+
+sequelize.sync().then(() => {
+  app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+  });
+});
