@@ -6,7 +6,11 @@ const tagsRouter = require('./routes/tags');
 const app = express();
 const port = 3888;
 
+const cors = require('cors');
 const redirectHandler = require('./redirectHandler');
+
+// Enable CORS
+app.use(cors());
 
 
 // ✅ Use absolute path for uploads
