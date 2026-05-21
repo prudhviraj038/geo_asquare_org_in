@@ -4,6 +4,8 @@ const router = express.Router();
 const multer = require('multer');
 const { nanoid } = require('nanoid');
 const Tag = require('../models/Tag');
+const fs = require('fs').promises;
+const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -21,6 +23,7 @@ const upload = multer({ storage: storage });
 router.post('/upload', upload.single('image'), async (req, res) => {
   const { device_id, timestamp, latitude, longitude } = req.body;
   const { tag } = req;
+  const extension = req.file ? req.file.filename.split('.').pop() : 'jpg';
 
   try {
     const newTag = await Tag.create({
@@ -28,7 +31,8 @@ router.post('/upload', upload.single('image'), async (req, res) => {
       device_id,
       timestamp,
       latitude,
-      longitude
+      longitude,
+      image_extension: extension
     });
 
     res.json({ tag: `${tag}` });
@@ -45,8 +49,26 @@ router.get('/:tag', async (req, res) => {
     const foundTag = await Tag.findOne({ where: { tag } });
 
     if (foundTag) {
+      let extension = foundTag.image_extension;
+
+      if (!extension) {
+        const uploadsDir = path.join(__dirname, '../uploads');
+        extension = 'jpg';
+        try {
+          const files = await fs.readdir(uploadsDir);
+          const matchedFile = files.find(file => file.startsWith(tag + '.'));
+          if (matchedFile) {
+            extension = matchedFile.split('.').pop();
+            foundTag.image_extension = extension;
+            await foundTag.save();
+          }
+        } catch (err) {
+          console.error('Error reading uploads directory:', err);
+        }
+      }
+
       res.json({
-        imageUrl: `/uploads/${tag}.jpg`,
+        imageUrl: `/uploads/${tag}.${extension}`,
         ...foundTag.toJSON()
       });
     } else {

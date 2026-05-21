@@ -28,7 +28,12 @@ app.get('/test', (req, res) => {
 
 app.use('/redirect', redirectHandler);
 
-sequelize.sync().then(() => {
+sequelize.sync().then(async () => {
+  try {
+    await sequelize.query("ALTER TABLE `Tags` ADD COLUMN `image_extension` VARCHAR(255) DEFAULT NULL;");
+  } catch (err) {
+    // Ignore error if column already exists
+  }
   app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
   });

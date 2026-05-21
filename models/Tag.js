@@ -23,6 +23,10 @@ const Tag = sequelize.define('Tag', {
   longitude: {
     type: DataTypes.DOUBLE,
     allowNull: false
+  },
+  image_extension: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 });
 
