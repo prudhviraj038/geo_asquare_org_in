@@ -22,16 +22,34 @@ const upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('image'), async (req, res) => {
   const { device_id, timestamp, latitude, longitude } = req.body;
-  const { tag } = req;
+  const tag = req.tag || nanoid();
   const extension = req.file ? req.file.filename.split('.').pop() : 'jpg';
+
+  // Clean and parse inputs
+  const cleanDeviceId = typeof device_id === 'string' ? device_id.trim() : (device_id || '');
+
+  let cleanTimestamp = new Date();
+  if (timestamp) {
+    let t = typeof timestamp === 'string' ? timestamp.trim() : timestamp;
+    if (typeof t === 'string' && /^\d+$/.test(t)) {
+      t = parseInt(t, 10);
+    }
+    const parsed = new Date(t);
+    if (!isNaN(parsed.getTime())) {
+      cleanTimestamp = parsed;
+    }
+  }
+
+  const cleanLatitude = latitude ? parseFloat(String(latitude).trim()) : 0.0;
+  const cleanLongitude = longitude ? parseFloat(String(longitude).trim()) : 0.0;
 
   try {
     const newTag = await Tag.create({
       tag,
-      device_id,
-      timestamp,
-      latitude,
-      longitude,
+      device_id: cleanDeviceId,
+      timestamp: cleanTimestamp,
+      latitude: cleanLatitude,
+      longitude: cleanLongitude,
       image_extension: extension
     });
 

@@ -1,8 +1,8 @@
 
 const { Sequelize } = require('sequelize');
 
-const sequelize = new Sequelize('geo_tag', 'geo_tag_user', 'f8$8BWSOapBo', {
-  host: '103.93.16.46',
+const sequelize = new Sequelize('prudhvid_geo_tag', 'prudhvid_geouser', 'Swapn@143', {
+  host: '127.0.0.1',
   dialect: 'mysql',
   dialectModule: require('mysql2'),
   logging: false, // Disable logging SQL queries for production
